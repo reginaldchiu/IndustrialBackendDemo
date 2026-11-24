@@ -1,0 +1,28 @@
+# .NET
+[Bb]in/
+[Oo]bj/
+[Ll]ogs/
+*.user
+*.suo
+*.cache
+
+# Test
+TestResults/
+coverage/
+coverage.*
+
+# IDE
+.vs/
+.idea/
+
+# Build
+artifacts/
+
+# Environment
+.env
+.env.*
+!.env.example
+
+# OS
+.DS_Store
+Thumbs.db
