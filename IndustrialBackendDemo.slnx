@@ -1,0 +1,12 @@
+<Solution>
+  <Folder Name="/src/">
+    <Project Path="src/IndustrialBackendDemo.Api/IndustrialBackendDemo.Api.csproj" />
+    <Project Path="src/IndustrialBackendDemo.Application/IndustrialBackendDemo.Application.csproj" />
+    <Project Path="src/IndustrialBackendDemo.Domain/IndustrialBackendDemo.Domain.csproj" />
+    <Project Path="src/IndustrialBackendDemo.Infrastructure/IndustrialBackendDemo.Infrastructure.csproj" />
+  </Folder>
+  <Folder Name="/tests/">
+    <Project Path="tests/IndustrialBackendDemo.IntegrationTests/IndustrialBackendDemo.IntegrationTests.csproj" />
+    <Project Path="tests/IndustrialBackendDemo.UnitTests/IndustrialBackendDemo.UnitTests.csproj" />
+  </Folder>
+</Solution>
