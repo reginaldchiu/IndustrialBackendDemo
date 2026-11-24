@@ -14,7 +14,7 @@ public sealed class AnalysisJob
 
     public DateTimeOffset? StartedAtUtc { get; private set; }
 
-    public DateTimeOffset? CompleteAtUtc { get; private set; }
+    public DateTimeOffset? CompletedAtUtc { get; private set; }
 
     public string? FailureReason { get; private set; }
 
@@ -51,7 +51,7 @@ public sealed class AnalysisJob
         EnsureRunning();
 
         Status = AnalysisJobStatus.Succeeded;
-        CompleteAtUtc = DateTimeOffset.UtcNow;
+        CompletedAtUtc = DateTimeOffset.UtcNow;
     }
 
     public void Fail(string reason)
@@ -61,7 +61,7 @@ public sealed class AnalysisJob
         ArgumentException.ThrowIfNullOrWhiteSpace(reason, nameof(reason));
 
         Status = AnalysisJobStatus.Failed;
-        CompleteAtUtc = DateTimeOffset.UtcNow;
+        CompletedAtUtc = DateTimeOffset.UtcNow;
         FailureReason = reason;
     }
 

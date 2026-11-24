@@ -66,7 +66,7 @@ public sealed class AnalysisJobTests
     {
         AnalysisJob job = CreateJob();
 
-        Assert.Null(job.CompleteAtUtc);
+        Assert.Null(job.CompletedAtUtc);
     }
 
     [Fact]
@@ -116,7 +116,7 @@ public sealed class AnalysisJobTests
 
         job.Start();
 
-        Assert.Null(job.CompleteAtUtc);
+        Assert.Null(job.CompletedAtUtc);
     }
 
     [Fact]
@@ -176,11 +176,11 @@ public sealed class AnalysisJobTests
 
         DateTimeOffset afterCompletion = DateTimeOffset.UtcNow;
 
-        Assert.NotNull(job.CompleteAtUtc);
+        Assert.NotNull(job.CompletedAtUtc);
 
-        Assert.InRange(job.CompleteAtUtc.Value, beforeCompletion, afterCompletion);
+        Assert.InRange(job.CompletedAtUtc.Value, beforeCompletion, afterCompletion);
 
-        Assert.Equal(TimeSpan.Zero, job.CompleteAtUtc.Value.Offset);
+        Assert.Equal(TimeSpan.Zero, job.CompletedAtUtc.Value.Offset);
     }
 
     [Fact]
@@ -254,11 +254,11 @@ public sealed class AnalysisJobTests
 
         DateTimeOffset afterFailure = DateTimeOffset.UtcNow;
 
-        Assert.NotNull(job.CompleteAtUtc);
+        Assert.NotNull(job.CompletedAtUtc);
 
-        Assert.InRange(job.CompleteAtUtc.Value, beforeFailure, afterFailure);
+        Assert.InRange(job.CompletedAtUtc.Value, beforeFailure, afterFailure);
 
-        Assert.Equal(TimeSpan.Zero, job.CompleteAtUtc.Value.Offset);
+        Assert.Equal(TimeSpan.Zero, job.CompletedAtUtc.Value.Offset);
     }
 
     [Fact]
@@ -311,13 +311,13 @@ public sealed class AnalysisJobTests
         AnalysisJob job = CreateRunningJob();
 
         DateTimeOffset? previousStartAt = job.StartedAtUtc;
-        DateTimeOffset? previousCompletedAt = job.CompleteAtUtc;
+        DateTimeOffset? previousCompletedAt = job.CompletedAtUtc;
 
         Assert.Throws<InvalidOperationException>(() => job.Start());
 
         Assert.Equal(AnalysisJobStatus.Running, job.Status);
         Assert.Equal(previousStartAt, job.StartedAtUtc);
-        Assert.Equal(previousCompletedAt, job.CompleteAtUtc);
+        Assert.Equal(previousCompletedAt, job.CompletedAtUtc);
     }
 
     [Fact]
@@ -326,13 +326,13 @@ public sealed class AnalysisJobTests
         AnalysisJob job = CreateJob();
 
         DateTimeOffset? previousStartAt = job.StartedAtUtc;
-        DateTimeOffset? previousCompletedAt = job.CompleteAtUtc;
+        DateTimeOffset? previousCompletedAt = job.CompletedAtUtc;
 
         Assert.Throws<InvalidOperationException>(() => job.Complete());
 
         Assert.Equal(AnalysisJobStatus.Pending, job.Status);
         Assert.Equal(previousStartAt, job.StartedAtUtc);
-        Assert.Equal(previousCompletedAt, job.CompleteAtUtc);
+        Assert.Equal(previousCompletedAt, job.CompletedAtUtc);
     }
 
     [Fact]
@@ -341,14 +341,14 @@ public sealed class AnalysisJobTests
         AnalysisJob job = CreateJob();
 
         DateTimeOffset? previousStartedAt = job.StartedAtUtc;
-        DateTimeOffset? previousCompletedAt = job.CompleteAtUtc;
+        DateTimeOffset? previousCompletedAt = job.CompletedAtUtc;
         var previousFailureReason = job.FailureReason;
 
         Assert.Throws<InvalidOperationException>(() => job.Fail("Analysis failed."));
 
         Assert.Equal(AnalysisJobStatus.Pending, job.Status);
         Assert.Equal(previousStartedAt, job.StartedAtUtc);
-        Assert.Equal(previousCompletedAt, job.CompleteAtUtc);
+        Assert.Equal(previousCompletedAt, job.CompletedAtUtc);
         Assert.Equal(previousFailureReason, job.FailureReason);
     }
 
