@@ -10,7 +10,7 @@ public sealed class UpdateDeviceStatusHandler(IDeviceRepository deviceRepository
 
     private static readonly ApplicationError InvalidStatusError = new("Device.InvalidStatus", "The specified device status is invalid.");
 
-    private static readonly ApplicationError InvalidStatusTransitionError = new("Device.InvalidStatusTransition", "The requested device status trnasition is not allowed.");
+    private static readonly ApplicationError InvalidStatusTransitionError = new("Device.InvalidStatusTransition", "The requested device status transition is not allowed.");
 
     public async Task<Result<Device>> HandleAsync(UpdateDeviceStatusCommand command, CancellationToken cancellationToken = default)
     {
