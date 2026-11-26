@@ -1,4 +1,6 @@
+using IndustrialBackendDemo.Application.Abstractions.Persistence;
 using IndustrialBackendDemo.Infrastructure.Persistence;
+using IndustrialBackendDemo.Infrastructure.Persistence.Repositories;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
@@ -32,6 +34,7 @@ public static class DependencyInjection
         });
 
         services.AddSingleton<IDatabaseConnectionFactory, DatabaseConnectionFactory>();
+        services.AddScoped<IDeviceRepository, DeviceRepository>();
 
         return services;
     }

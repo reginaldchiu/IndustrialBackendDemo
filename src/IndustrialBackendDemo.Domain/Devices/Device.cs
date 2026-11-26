@@ -16,26 +16,9 @@ public sealed class Device
 
     public Device(DeviceId id, string name, string serialNumber)
     {
-        if (id.Value == Guid.Empty)
-        {
-            throw new ArgumentException("Device ID cannot be empty.", nameof(id));
-        }
-
-        ValidateRequiredText(name, nameof(name));
-        ValidateRequiredText(serialNumber, nameof(serialNumber));
-
-        if (name.Length > 100)
-        {
-            throw new ArgumentException("Device name cannot exceed 100 characters.", nameof(name));
-        }
-
-        if (serialNumber.Length > 100)
-        {
-            throw new ArgumentException(
-                "Serial number cannot exceed 100 characters.",
-                nameof(serialNumber)
-            );
-        }
+        ValidateId(id);
+        ValidateName(name);
+        ValidateSerialNumber(serialNumber);
 
         Id = id;
         Name = name;
@@ -47,16 +30,45 @@ public sealed class Device
         UpdatedAtUtc = CreatedAtUtc;
     }
 
+    private Device(DeviceId id, string name, string serialNumber, DeviceStatus status, DateTimeOffset createdAtUtc, DateTimeOffset updatedAtUtc)
+    {
+        ValidateId(id);
+        ValidateName(name);
+        ValidateSerialNumber(serialNumber);
+        ValidateStatus(status);
+
+        if (createdAtUtc.Offset != TimeSpan.Zero)
+        {
+            throw new ArgumentException("CreatedAtUtc must use UTC.", nameof(createdAtUtc));
+        }
+
+        if (updatedAtUtc.Offset != TimeSpan.Zero)
+        {
+            throw new ArgumentException("UpdatedAtUtc must use UTC.", nameof(updatedAtUtc));
+        }
+
+        if (updatedAtUtc < createdAtUtc)
+        {
+            throw new ArgumentException("UpdatedAtUtc cannot be earlier than CreatedAtUtc.", nameof(updatedAtUtc));
+        }
+
+        Id = id;
+        Name = name;
+        SerialNumber = serialNumber;
+        Status = status;
+        CreatedAtUtc = createdAtUtc;
+        UpdatedAtUtc = updatedAtUtc;
+    }
+
+    public static Device Reconstitute(DeviceId id, string name, string serialNumber, DeviceStatus status, DateTimeOffset createdAtUtc, DateTimeOffset updatedAtUtc)
+    {
+        return new Device(id, name, serialNumber, status, createdAtUtc, updatedAtUtc);
+    }
+
     public void ChangeStatus(DeviceStatus newStatus)
     {
-        if (!Enum.IsDefined(newStatus))
-        {
-            throw new ArgumentOutOfRangeException(
-                nameof(newStatus),
-                newStatus,
-                "Invalid device status."
-            );
-        }
+        ValidateStatus(newStatus);
+
 
         if (Status == newStatus)
         {
@@ -98,8 +110,39 @@ public sealed class Device
         };
     }
 
-    private static void ValidateRequiredText(string value, string parameterName)
+    private static void ValidateId(DeviceId id)
     {
-        ArgumentException.ThrowIfNullOrWhiteSpace(value, parameterName);
+        if (id.Value == Guid.Empty)
+        {
+            throw new ArgumentException("Device ID cannot be empty.", nameof(id));
+        }
+    }
+
+    private static void ValidateName(string name)
+    {
+        ArgumentException.ThrowIfNullOrWhiteSpace(name);
+
+        if (name.Length > 100)
+        {
+            throw new ArgumentException("Device name cannot exceed 100 characters.", nameof(name));
+        }
+    }
+
+    private static void ValidateSerialNumber(string serialNumber)
+    {
+        ArgumentException.ThrowIfNullOrWhiteSpace(serialNumber);
+
+        if (serialNumber.Length > 100)
+        {
+            throw new ArgumentException("Serial number cannot exceed 100 characters.", nameof(serialNumber));
+        }
+    }
+
+    private static void ValidateStatus(DeviceStatus status)
+    {
+        if (!Enum.IsDefined(status))
+        {
+            throw new ArgumentOutOfRangeException(nameof(status), "Invalid device status.");
+        }
     }
 }

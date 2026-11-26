@@ -30,7 +30,14 @@ public sealed class RegisterDeviceHandler(IDeviceRepository deviceRepository)
 
         Device device = new(DeviceId.New(), command.Name, command.SerialNumber);
 
-        await deviceRepository.AddAsync(device, cancellationToken);
+        try
+        {
+            await deviceRepository.AddAsync(device, cancellationToken);
+        }
+        catch (DeviceSerialNumberAlreadyExistsException)
+        {
+            return Result<Device>.Failure(_duplicateSerialNumberError);
+        }
 
         return Result<Device>.Success(device);
     }
