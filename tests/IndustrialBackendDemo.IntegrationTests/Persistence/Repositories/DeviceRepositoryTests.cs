@@ -37,8 +37,10 @@ public sealed class DeviceRepositoryTests(
         await using TestDatabase database = await CreateDatabaseAsync();
         DeviceRepository repository = CreateRepository(database);
 
-        Device first = CreateDevice();
-        Device second = CreateDevice();
+        const string serialNumber = "SENSOR-DUPLICATE-001";
+
+        Device first = CreateDevice(serialNumber);
+        Device second = CreateDevice(serialNumber);
 
         await repository.AddAsync(first);
 
@@ -46,10 +48,7 @@ public sealed class DeviceRepositoryTests(
             await Assert.ThrowsAsync<DeviceSerialNumberAlreadyExistsException>(
                 () => repository.AddAsync(second));
 
-        Assert.Equal(second.SerialNumber, exception.Message.Contains(
-            second.SerialNumber, StringComparison.Ordinal)
-            ? second.SerialNumber
-            : null);
+        Assert.Contains(serialNumber, exception.Message);
     }
 
     [Fact]
@@ -242,12 +241,12 @@ public sealed class DeviceRepositoryTests(
             new TestDatabaseConnectionFactory(database.ConnectionString));
     }
 
-    private static Device CreateDevice()
+    private static Device CreateDevice(string? serialNumber = null)
     {
         return new Device(
             DeviceId.New(),
             "Industrial Sensor",
-            $"SENSOR-{Guid.NewGuid():N}");
+            serialNumber ?? $"SENSOR-{Guid.NewGuid():N}");
     }
 
     private async Task<TestDatabase> CreateDatabaseAsync()
