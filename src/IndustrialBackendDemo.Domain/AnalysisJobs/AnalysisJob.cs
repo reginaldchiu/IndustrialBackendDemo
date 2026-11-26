@@ -20,15 +20,7 @@ public sealed class AnalysisJob
 
     public AnalysisJob(AnalysisJobId id, DeviceId deviceId)
     {
-        if (id.Value == Guid.Empty)
-        {
-            throw new ArgumentException("Analysis job ID cannot be empty.", nameof(id));
-        }
-
-        if (deviceId.Value == Guid.Empty)
-        {
-            throw new ArgumentException("Device ID cannot be empty.", nameof(deviceId));
-        }
+        ValidateId(id, deviceId);
 
         Id = id;
         DeviceId = deviceId;
@@ -36,6 +28,42 @@ public sealed class AnalysisJob
         Status = AnalysisJobStatus.Pending;
 
         CreatedAtUtc = DateTimeOffset.UtcNow;
+    }
+
+    private AnalysisJob(
+        AnalysisJobId id,
+        DeviceId deviceId,
+        AnalysisJobStatus status,
+        DateTimeOffset createdAtUtc,
+        DateTimeOffset? startedAtUtc,
+        DateTimeOffset? completedAtUtc,
+        string? failureReason)
+    {
+        ValidateId(id, deviceId);
+        ValidateStatus(status);
+        ValidateTimestamps(createdAtUtc, startedAtUtc, completedAtUtc);
+        ValidateLifecycle(status, startedAtUtc, completedAtUtc, failureReason);
+
+        Id = id;
+        DeviceId = deviceId;
+        Status = status;
+
+        CreatedAtUtc = createdAtUtc;
+        StartedAtUtc = startedAtUtc;
+        CompletedAtUtc = completedAtUtc;
+        FailureReason = failureReason;
+    }
+
+    public static AnalysisJob Reconstitute(
+        AnalysisJobId id,
+        DeviceId deviceId,
+        AnalysisJobStatus status,
+        DateTimeOffset createdAtUtc,
+        DateTimeOffset? startedAtUtc,
+        DateTimeOffset? completedAtUtc,
+        string? failureReason)
+    {
+        return new AnalysisJob(id, deviceId, status, createdAtUtc, startedAtUtc, completedAtUtc, failureReason);
     }
 
     public void Start()
@@ -78,6 +106,85 @@ public sealed class AnalysisJob
         if (Status != AnalysisJobStatus.Running)
         {
             throw new InvalidOperationException("Analysis job must be running.");
+        }
+    }
+
+    private static void ValidateId(AnalysisJobId id, DeviceId deviceId)
+    {
+        if (id.Value == Guid.Empty)
+        {
+            throw new ArgumentException("Analysis job ID cannot be empty.", nameof(id));
+        }
+
+        if (deviceId.Value == Guid.Empty)
+        {
+            throw new ArgumentException("Device ID cannot be empty.", nameof(deviceId));
+        }
+    }
+
+    private static void ValidateStatus(AnalysisJobStatus status)
+    {
+        if (!Enum.IsDefined(status))
+        {
+            throw new ArgumentOutOfRangeException(nameof(status), "Invalid analysis job status.");
+        }
+    }
+
+    private static void ValidateTimestamps(
+        DateTimeOffset createdAtUtc,
+        DateTimeOffset? startedAtUtc,
+        DateTimeOffset? completedAtUtc)
+    {
+        if (createdAtUtc.Offset != TimeSpan.Zero)
+        {
+            throw new ArgumentException("CreatedAtUtc must use UTC.", nameof(createdAtUtc));
+        }
+
+        if (startedAtUtc.HasValue && startedAtUtc.Value.Offset != TimeSpan.Zero)
+        {
+            throw new ArgumentException("StartedAtUtc must use UTC.", nameof(startedAtUtc));
+        }
+
+        if (completedAtUtc.HasValue && completedAtUtc.Value.Offset != TimeSpan.Zero)
+        {
+            throw new ArgumentException("CompletedAtUtc must use UTC", nameof(completedAtUtc));
+        }
+    }
+
+    private static void ValidateLifecycle(
+        AnalysisJobStatus status,
+        DateTimeOffset? startedAtUtc,
+        DateTimeOffset? completedAtUtc,
+        string? failureReason)
+    {
+        var isValid = status switch
+        {
+            AnalysisJobStatus.Pending =>
+                startedAtUtc is null &&
+                completedAtUtc is null &&
+                failureReason is null,
+
+            AnalysisJobStatus.Running =>
+                startedAtUtc is not null &&
+                completedAtUtc is null &&
+                failureReason is null,
+
+            AnalysisJobStatus.Succeeded =>
+                startedAtUtc is not null &&
+                completedAtUtc is not null &&
+                failureReason is null,
+
+            AnalysisJobStatus.Failed =>
+                startedAtUtc is not null &&
+                completedAtUtc is not null &&
+                !string.IsNullOrWhiteSpace(failureReason),
+
+            _ => false
+        };
+
+        if (!isValid)
+        {
+            throw new ArgumentException("Analysis job lifecycle properties are inconsistent.");
         }
     }
 }
