@@ -6,7 +6,7 @@ namespace IndustrialBackendDemo.Application.Devices.RegisterDevice;
 
 public sealed class RegisterDeviceHandler(IDeviceRepository deviceRepository)
 {
-    private static readonly ApplicationError DuplicateSerialNumberError = new(
+    private static readonly ApplicationError _duplicateSerialNumberError = new(
         "Device.DuplicateSerialNumber",
         "A device with the specified serial number already exists."
     );
@@ -25,7 +25,7 @@ public sealed class RegisterDeviceHandler(IDeviceRepository deviceRepository)
 
         if (existingDevice is not null)
         {
-            return Result<Device>.Failure(DuplicateSerialNumberError);
+            return Result<Device>.Failure(_duplicateSerialNumberError);
         }
 
         Device device = new(DeviceId.New(), command.Name, command.SerialNumber);

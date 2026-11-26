@@ -8,24 +8,24 @@ namespace IndustrialBackendDemo.UnitTests.Devices.UpdateDeviceStatus;
 
 public sealed class UpdateDeviceStatusHandlerTests
 {
-    private static readonly DeviceId TestDeviceId = DeviceId.New();
+    private static readonly DeviceId _testDeviceId = DeviceId.New();
 
-    private const string DeviceName = "Industrial Sensor";
-    private const string SerialNumber = "SN-2026-0001";
+    private const string _deviceName = "Industrial Sensor";
+    private const string _serialNumber = "SN-2026-0001";
 
     private static UpdateDeviceStatusCommand CreateCommand(
         DeviceStatus status = DeviceStatus.Online
     )
     {
-        return new UpdateDeviceStatusCommand(TestDeviceId, status);
+        return new UpdateDeviceStatusCommand(_testDeviceId, status);
     }
 
     private static Device CreateDevice()
     {
         return new Device(
-            TestDeviceId,
-            DeviceName,
-            SerialNumber
+            _testDeviceId,
+            _deviceName,
+            _serialNumber
         );
     }
 
@@ -178,7 +178,7 @@ public sealed class UpdateDeviceStatusHandlerTests
 
         await handler.HandleAsync(CreateCommand());
 
-        Assert.Equal(TestDeviceId, repository.RequestedDeviceId);
+        Assert.Equal(_testDeviceId, repository.RequestedDeviceId);
     }
 
     [Fact]

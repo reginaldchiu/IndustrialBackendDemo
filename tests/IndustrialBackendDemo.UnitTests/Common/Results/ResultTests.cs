@@ -2,7 +2,7 @@ namespace IndustrialBackendDemo.Application.Common.Results;
 
 public sealed class ResultTests
 {
-    private static readonly ApplicationError TestError = new("Test.Error", "This is a test error.");
+    private static readonly ApplicationError _testError = new("Test.Error", "This is a test error.");
 
     [Fact]
     public void SuccessShouldCreateSuccessfulResult()
@@ -17,11 +17,11 @@ public sealed class ResultTests
     [Fact]
     public void FailureShouldCreateFailedResult()
     {
-        var result = Result.Failure(TestError);
+        var result = Result.Failure(_testError);
 
         Assert.False(result.IsSuccess);
         Assert.True(result.IsFailure);
-        Assert.Equal(TestError, result.Error);
+        Assert.Equal(_testError, result.Error);
     }
 
     [Fact]
@@ -58,17 +58,17 @@ public sealed class ResultTests
     [Fact]
     public void GenericFailureShouldContainError()
     {
-        var result = Result<string>.Failure(TestError);
+        var result = Result<string>.Failure(_testError);
 
         Assert.False(result.IsSuccess);
         Assert.True(result.IsFailure);
-        Assert.Equal(TestError, result.Error);
+        Assert.Equal(_testError, result.Error);
     }
 
     [Fact]
     public void GenericFailureShouldNotAllowValueAccess()
     {
-        var result = Result<string>.Failure(TestError);
+        var result = Result<string>.Failure(_testError);
 
         Assert.Throws<InvalidOperationException>(() => _ = result.Value);
     }

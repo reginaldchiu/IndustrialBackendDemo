@@ -7,17 +7,17 @@ namespace IndustrialBackendDemo.UnitTests.Devices.RegisterDevice;
 
 public sealed class RegisterDeviceHandlerTests
 {
-    private const string DeviceName = "Industrial Sensor";
-    private const string SerialNumber = "SN-2026-0001";
+    private const string _deviceName = "Industrial Sensor";
+    private const string _serialNumber = "SN-2026-0001";
 
     private static RegisterDeviceCommand CreateCommand()
     {
-        return new RegisterDeviceCommand(DeviceName, SerialNumber);
+        return new RegisterDeviceCommand(_deviceName, _serialNumber);
     }
 
     private static Device CreateExistingDevice()
     {
-        return new Device(DeviceId.New(), "Existing Sensor", SerialNumber);
+        return new Device(DeviceId.New(), "Existing Sensor", _serialNumber);
     }
 
     private static RegisterDeviceHandler CreateHandler(FakeDeviceRepository repository)
@@ -36,8 +36,8 @@ public sealed class RegisterDeviceHandlerTests
         Assert.True(result.IsSuccess);
         Assert.False(result.IsFailure);
 
-        Assert.Equal(DeviceName, result.Value.Name);
-        Assert.Equal(SerialNumber, result.Value.SerialNumber);
+        Assert.Equal(_deviceName, result.Value.Name);
+        Assert.Equal(_serialNumber, result.Value.SerialNumber);
 
         Assert.Equal(DeviceStatus.Offline, result.Value.Status);
         Assert.NotEqual(Guid.Empty, result.Value.Id.Value);
@@ -80,7 +80,7 @@ public sealed class RegisterDeviceHandlerTests
 
         await handler.HandleAsync(CreateCommand());
 
-        Assert.Equal(SerialNumber, repository.RequestedSerialNumber);
+        Assert.Equal(_serialNumber, repository.RequestedSerialNumber);
     }
 
     [Fact]

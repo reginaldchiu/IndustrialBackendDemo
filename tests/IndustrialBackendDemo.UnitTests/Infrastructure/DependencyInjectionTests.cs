@@ -9,7 +9,7 @@ namespace IndustrialBackendDemo.UnitTests.Infrastructure;
 
 public sealed class DependencyInjectionTests
 {
-    private const string ValidConnectionString = "Host=localhost;Port=5432;Database=test;Username=test;Password=test";
+    private const string _validConnectionString = "Host=localhost;Port=5432;Database=test;Username=test;Password=test";
 
     private static IConfiguration CreateConfiguration(string connectionString)
     {
@@ -29,7 +29,7 @@ public sealed class DependencyInjectionTests
         ServiceCollection services = new();
 
         IServiceCollection result = services.AddInfrastructure(
-            CreateConfiguration(ValidConnectionString)
+            CreateConfiguration(_validConnectionString)
         );
 
         Assert.Same(services, result);
@@ -41,7 +41,7 @@ public sealed class DependencyInjectionTests
         ServiceCollection services = new();
 
         services.AddInfrastructure(
-            CreateConfiguration(ValidConnectionString)
+            CreateConfiguration(_validConnectionString)
         );
 
         ServiceDescriptor? descriptor = services.SingleOrDefault(
@@ -58,7 +58,7 @@ public sealed class DependencyInjectionTests
         ServiceCollection services = new();
 
         services.AddInfrastructure(
-            CreateConfiguration(ValidConnectionString)
+            CreateConfiguration(_validConnectionString)
         );
 
         ServiceDescriptor? descriptor = services.SingleOrDefault(
@@ -76,7 +76,7 @@ public sealed class DependencyInjectionTests
         IServiceCollection services = null!;
 
         Action act = () => services.AddInfrastructure(
-            CreateConfiguration(ValidConnectionString)
+            CreateConfiguration(_validConnectionString)
         );
 
         Assert.Throws<ArgumentNullException>(act);
@@ -117,7 +117,7 @@ public sealed class DependencyInjectionTests
         ServiceCollection services = new();
 
         services.AddInfrastructure(
-            CreateConfiguration(ValidConnectionString)
+            CreateConfiguration(_validConnectionString)
         );
 
         using ServiceProvider provider = services.BuildServiceProvider();
@@ -137,7 +137,7 @@ public sealed class DependencyInjectionTests
         ServiceCollection services = new();
 
         services.AddInfrastructure(
-            CreateConfiguration(ValidConnectionString)
+            CreateConfiguration(_validConnectionString)
         );
 
         using ServiceProvider provider = services.BuildServiceProvider();

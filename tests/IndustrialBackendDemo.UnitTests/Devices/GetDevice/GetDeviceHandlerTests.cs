@@ -7,19 +7,19 @@ namespace IndustrialBackendDemo.UnitTests.Devices.GetDevice;
 
 public sealed class GetDeviceHandlerTests
 {
-    private static readonly DeviceId TestDeviceId = DeviceId.New();
+    private static readonly DeviceId _testDeviceId = DeviceId.New();
 
-    private const string DeviceName = "Industrial Sensor";
-    private const string SerialNumber = "SN-2026-0001";
+    private const string _deviceName = "Industrial Sensor";
+    private const string _serialNumber = "SN-2026-0001";
 
     private static GetDeviceQuery CreateQuery()
     {
-        return new GetDeviceQuery(TestDeviceId);
+        return new GetDeviceQuery(_testDeviceId);
     }
 
     private static Device CreateDevice()
     {
-        return new Device(TestDeviceId, DeviceName, SerialNumber);
+        return new Device(_testDeviceId, _deviceName, _serialNumber);
     }
 
     private static GetDeviceHandler CreateHandler(FakeDeviceRepository repository)
@@ -46,9 +46,9 @@ public sealed class GetDeviceHandlerTests
 
         Assert.Same(expectedDevice, result.Value);
 
-        Assert.Equal(DeviceName, result.Value.Name);
-        Assert.Equal(SerialNumber, result.Value.SerialNumber);
-        Assert.Equal(TestDeviceId, result.Value.Id);
+        Assert.Equal(_deviceName, result.Value.Name);
+        Assert.Equal(_serialNumber, result.Value.SerialNumber);
+        Assert.Equal(_testDeviceId, result.Value.Id);
 
         Assert.Equal(1, repository.GetByIdCallCount);
     }
@@ -83,7 +83,7 @@ public sealed class GetDeviceHandlerTests
 
         await handler.HandleAsync(CreateQuery());
 
-        Assert.Equal(TestDeviceId, repository.RequestedDeviceId);
+        Assert.Equal(_testDeviceId, repository.RequestedDeviceId);
     }
 
     [Fact]

@@ -6,7 +6,7 @@ namespace IndustrialBackendDemo.Application.Devices.GetDevice;
 
 public sealed class GetDeviceHandler(IDeviceRepository deviceRepository)
 {
-    private static readonly ApplicationError DeviceNotFoundError = new("Device.NotFound", "The specified device was not found.");
+    private static readonly ApplicationError _deviceNotFoundError = new("Device.NotFound", "The specified device was not found.");
 
     public async Task<Result<Device>> HandleAsync(GetDeviceQuery query, CancellationToken cancellationToken = default)
     {
@@ -16,7 +16,7 @@ public sealed class GetDeviceHandler(IDeviceRepository deviceRepository)
 
         if (device is null)
         {
-            return Result<Device>.Failure(DeviceNotFoundError);
+            return Result<Device>.Failure(_deviceNotFoundError);
         }
 
         return Result<Device>.Success(device);

@@ -6,11 +6,11 @@ namespace IndustrialBackendDemo.Application.Devices.UpdateDeviceStatus;
 
 public sealed class UpdateDeviceStatusHandler(IDeviceRepository deviceRepository)
 {
-    private static readonly ApplicationError DeviceNotFoundError = new("Device.NotFound", "The specified device was not found.");
+    private static readonly ApplicationError _deviceNotFoundError = new("Device.NotFound", "The specified device was not found.");
 
-    private static readonly ApplicationError InvalidStatusError = new("Device.InvalidStatus", "The specified device status is invalid.");
+    private static readonly ApplicationError _invalidStatusError = new("Device.InvalidStatus", "The specified device status is invalid.");
 
-    private static readonly ApplicationError InvalidStatusTransitionError = new("Device.InvalidStatusTransition", "The requested device status transition is not allowed.");
+    private static readonly ApplicationError _invalidStatusTransitionError = new("Device.InvalidStatusTransition", "The requested device status transition is not allowed.");
 
     public async Task<Result<Device>> HandleAsync(UpdateDeviceStatusCommand command, CancellationToken cancellationToken = default)
     {
@@ -20,7 +20,7 @@ public sealed class UpdateDeviceStatusHandler(IDeviceRepository deviceRepository
 
         if (device is null)
         {
-            return Result<Device>.Failure(DeviceNotFoundError);
+            return Result<Device>.Failure(_deviceNotFoundError);
         }
 
         try
@@ -29,11 +29,11 @@ public sealed class UpdateDeviceStatusHandler(IDeviceRepository deviceRepository
         }
         catch (ArgumentOutOfRangeException)
         {
-            return Result<Device>.Failure(InvalidStatusError);
+            return Result<Device>.Failure(_invalidStatusError);
         }
         catch (InvalidOperationException)
         {
-            return Result<Device>.Failure(InvalidStatusTransitionError);
+            return Result<Device>.Failure(_invalidStatusTransitionError);
         }
 
         await deviceRepository.UpdateAsync(device, cancellationToken);
