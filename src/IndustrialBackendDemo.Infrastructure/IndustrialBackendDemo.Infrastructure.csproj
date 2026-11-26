@@ -3,4 +3,9 @@
     <ProjectReference Include="..\IndustrialBackendDemo.Application\IndustrialBackendDemo.Application.csproj" />
     <ProjectReference Include="..\IndustrialBackendDemo.Domain\IndustrialBackendDemo.Domain.csproj" />
   </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="Dapper" />
+    <PackageReference Include="Microsoft.Extensions.Options.ConfigurationExtensions" />
+    <PackageReference Include="Npgsql" />
+  </ItemGroup>
 </Project>
