@@ -1,3 +1,4 @@
+using IndustrialBackendDemo.Api.Endpoints.Devices;
 using IndustrialBackendDemo.Application;
 using IndustrialBackendDemo.Infrastructure;
 
@@ -22,4 +23,8 @@ if (app.Environment.IsDevelopment())
 
 app.MapHealthChecks("/health/live");
 
+app.MapDeviceEndpoints();
+
 app.Run();
+
+public partial class Program { }
