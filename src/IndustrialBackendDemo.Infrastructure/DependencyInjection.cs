@@ -35,6 +35,7 @@ public static class DependencyInjection
 
         services.AddSingleton<IDatabaseConnectionFactory, DatabaseConnectionFactory>();
         services.AddScoped<IDeviceRepository, DeviceRepository>();
+        services.AddScoped<IAnalysisJobRepository, AnalysisJobRepository>();
 
         return services;
     }
