@@ -63,6 +63,8 @@ public static class DependencyInjection
         );
 
         services.AddSingleton<IAnalysisJobQueue, ChannelAnalysisJobQueue>();
+        services.AddScoped<IAnalysisJobProcessor, DemoAnalysisJobProcessor>();
+        services.AddHostedService<AnalysisJobBackgroundService>();
 
         return services;
     }
