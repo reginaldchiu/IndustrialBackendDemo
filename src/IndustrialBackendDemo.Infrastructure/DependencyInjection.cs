@@ -1,4 +1,8 @@
+using System.Threading.Channels;
 using IndustrialBackendDemo.Application.Abstractions.Persistence;
+using IndustrialBackendDemo.Application.Abstractions.Processing;
+using IndustrialBackendDemo.Domain.AnalysisJobs;
+using IndustrialBackendDemo.Infrastructure.BackgroundProcessing;
 using IndustrialBackendDemo.Infrastructure.Persistence;
 using IndustrialBackendDemo.Infrastructure.Persistence.Repositories;
 using Microsoft.Extensions.Configuration;
@@ -10,6 +14,8 @@ namespace IndustrialBackendDemo.Infrastructure;
 
 public static class DependencyInjection
 {
+    private const int _analysisJobQueueCapacity = 100;
+
     public static IServiceCollection AddInfrastructure(this IServiceCollection services, IConfiguration configuration)
     {
         ArgumentNullException.ThrowIfNull(services);
@@ -36,6 +42,27 @@ public static class DependencyInjection
         services.AddSingleton<IDatabaseConnectionFactory, DatabaseConnectionFactory>();
         services.AddScoped<IDeviceRepository, DeviceRepository>();
         services.AddScoped<IAnalysisJobRepository, AnalysisJobRepository>();
+
+        services.AddSingleton(_ =>
+            Channel.CreateBounded<AnalysisJobId>(
+                new BoundedChannelOptions(_analysisJobQueueCapacity)
+                {
+                    FullMode = BoundedChannelFullMode.Wait,
+                    SingleReader = true,
+                    SingleWriter = false
+                }
+            )
+        );
+
+        services.AddSingleton(
+            serviceProvider => serviceProvider.GetRequiredService<Channel<AnalysisJobId>>().Reader
+        );
+
+        services.AddSingleton(
+            serviceProvider => serviceProvider.GetRequiredService<Channel<AnalysisJobId>>().Writer
+        );
+
+        services.AddSingleton<IAnalysisJobQueue, ChannelAnalysisJobQueue>();
 
         return services;
     }
